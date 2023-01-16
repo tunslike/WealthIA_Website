@@ -178,7 +178,9 @@
 }
 
 .innerLeft {
-    padding: 15%;
+    padding-top: 5%;
+padding-left: 15%;
+padding-right: 15%;
     text-align: left;
 }
 
@@ -255,11 +257,11 @@
 
 .formControl {
     background-color: #f5f5f5;
-    border-radius: 10px;
+    border-radius: 7px;
     position: relative;
     margin-bottom: 20px;
     display: flex;
-    padding: 10px;
+    padding: 7px;
     flex-direction: row;
     justify-content: flex-start;
 }
@@ -277,7 +279,14 @@
 .formControl input {
     border: none;
     width: 75%;
-    height: 40px;
+    height: 30px;
+    background-color: #f5f5ee;
+}
+
+.formControl select {
+    border: none;
+    width: 75%;
+    height: 30px;
     background-color: #f5f5ee;
 }
 

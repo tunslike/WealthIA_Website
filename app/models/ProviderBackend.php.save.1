@@ -1,7 +1,5 @@
 
 
-
-
 <?php
 class ProviderBackend {
     private $db;
@@ -47,39 +45,10 @@ class ProviderBackend {
 			return false;
 		}
 
-
 	}catch(PDOException $e){
             echo 'ERROR!';
             print_r( $e );
         }
-}
-
-// CREATE PROVIDER PASSWORD
-public function createProviderPassword($clientid) {
-        
-         try {
-                    // create provider details
-                $this->db->query("INSERT INTO wa_access (CLIENT_ID, ACCESS_ID, DATE_CREATED)
-                                 VALUES (:client_id, :password_id, :dateCreated) ");
-
-                 $date =  date('Y-m-d H:i:s');
-		 $hashPassword = $this->getHashAccessID();
-
-                 $this->db->bind(':client_id', $clientid);
-                 $this->db->bind(':password_id', $hashPassword);  
-                 $this->db->bind(':dateCreated', $date);
-
-                 if($this->db->execute()) {
-                        return true;
-                 }else{
-                        return false;
-                 }
-
-        }catch(PDOException $e){
-            echo 'ERROR!';
-            print_r( $e );
-        }
-
 }
 
 
@@ -88,8 +57,7 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
 	
 	 try {
 		    // create provider details
-                $this->db->query("INSERT INTO wa_providers (PROVIDER_ID, PROVIDER_NAME, SECTOR_ID, DATE_CREATED)
-                                 VALUES (:providerid, :provider_name, :sector, :dateCreated) ");
+                $this->db->query("INSERT INTO wa_prodviders (PROVIDER_ID, PROVIDER_NAME, SECTOR_ID, DATE_CREATED) VALUES (:providerid, :provider_name, :sector, :date) ");
 
 		 $date =  date('Y-m-d H:i:s');
 
@@ -192,7 +160,7 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
 
         $date =  date('Y-m-d H:i:s');
         $uploadid = $this->getCustomerID();
-
+        
         //Bind values
         $this->db->bind(':uploadid', $uploadid);
         $this->db->bind(':providerid', $data['providerid']);

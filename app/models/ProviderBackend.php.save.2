@@ -1,7 +1,6 @@
 
 
 
-
 <?php
 class ProviderBackend {
     private $db;
@@ -27,7 +26,7 @@ class ProviderBackend {
 
 
 // CREATE PROVIDER ACCESS
- public function createProviderAccess($clientid) {
+ public function createProviderAccess2($clientid) {
 	
 	try {
 	         //create access ID
@@ -54,19 +53,20 @@ class ProviderBackend {
         }
 }
 
-// CREATE PROVIDER PASSWORD
-public function createProviderPassword($clientid) {
+
+//CREATE PROVIDER ACCESS LEVEL ONE
+public function createProviderAccessID($clientid, $company_name, $sector ) {
         
          try {
                     // create provider details
-                $this->db->query("INSERT INTO wa_access (CLIENT_ID, ACCESS_ID, DATE_CREATED)
-                                 VALUES (:client_id, :password_id, :dateCreated) ");
+                $this->db->query("INSERT INTO wa_access (CLIENT_ID, PROVIDER_NAME, SECTOR_ID, DATE_CREATED)
+                                 VALUES (:providerid, :provider_name, :sector, :dateCreated) ");
 
                  $date =  date('Y-m-d H:i:s');
-		 $hashPassword = $this->getHashAccessID();
 
-                 $this->db->bind(':client_id', $clientid);
-                 $this->db->bind(':password_id', $hashPassword);  
+                 $this->db->bind(':providerid', $clientid);
+                 $this->db->bind(':provider_name', $company_name);
+                 $this->db->bind(':sector', $sector);
                  $this->db->bind(':dateCreated', $date);
 
                  if($this->db->execute()) {
@@ -81,6 +81,9 @@ public function createProviderPassword($clientid) {
         }
 
 }
+
+
+//END OF CREATE PROVIDER ACCESS
 
 
 // CREATE PROVIDER DETAILS
@@ -192,7 +195,7 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
 
         $date =  date('Y-m-d H:i:s');
         $uploadid = $this->getCustomerID();
-
+        
         //Bind values
         $this->db->bind(':uploadid', $uploadid);
         $this->db->bind(':providerid', $data['providerid']);

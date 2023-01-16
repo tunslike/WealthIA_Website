@@ -41,7 +41,7 @@
         </h2>
         <p>Register as a certified provider on WealthIA and connect directly with your customers</p>
         <div class="providerButtons">
-        <a href="<?php echo URLROOT; ?>/provider/completeRegistration" title="Click to Upload Documents" class="completeBtn">Upload Provider Documents</a>
+        <a href="<?php echo URLROOT; ?>/provider/completeRegistration" title="Click here to get started" class="completeBtn">Get Started here</a>
         </div>
     </div>
     </div>

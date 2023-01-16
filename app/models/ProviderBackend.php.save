@@ -1,7 +1,6 @@
 
 
 
-
 <?php
 class ProviderBackend {
     private $db;
@@ -25,95 +24,6 @@ class ProviderBackend {
         return $results;
    }
 
-
-// CREATE PROVIDER ACCESS
- public function createProviderAccess($clientid) {
-	
-	try {
-	         //create access ID
-                $this->db-query("INSERT INTO wa_access (CLIENT_ID, ACCESS_ID, DATE_CREATED) 
-			        VALUES (:client_id, :access_id, :dateCreated) ");
-
-		 $date = date('Y-m-d H:i:s');
-                // $hashPwd = $this->getHashAccessID();
-
-                 $this->db->bind(':client_id', $clientid);
-                 $this->db->bind(':access_id', '$2a$08$tUrj8FxSjbhgLk8oOcDoYul00uE69voleKCKR8/ycMZe/g39CGAA6');
-                 $this->db->bind(':dateCreated', $date);
-                
-                 if($this->db->execute()) {
-			return true;
-		}else{
-			return false;
-		}
-
-
-	}catch(PDOException $e){
-            echo 'ERROR!';
-            print_r( $e );
-        }
-}
-
-// CREATE PROVIDER PASSWORD
-public function createProviderPassword($clientid) {
-        
-         try {
-                    // create provider details
-                $this->db->query("INSERT INTO wa_access (CLIENT_ID, ACCESS_ID, DATE_CREATED)
-                                 VALUES (:client_id, :password_id, :dateCreated) ");
-
-                 $date =  date('Y-m-d H:i:s');
-		 $hashPassword = $this->getHashAccessID();
-
-                 $this->db->bind(':client_id', $clientid);
-                 $this->db->bind(':password_id', $hashPassword);  
-                 $this->db->bind(':dateCreated', $date);
-
-                 if($this->db->execute()) {
-                        return true;
-                 }else{
-                        return false;
-                 }
-
-        }catch(PDOException $e){
-            echo 'ERROR!';
-            print_r( $e );
-        }
-
-}
-
-
-// CREATE PROVIDER DETAILS
-public function createProviderDetails($clientid, $company_name, $sector ) {
-	
-	 try {
-		    // create provider details
-                $this->db->query("INSERT INTO wa_providers (PROVIDER_ID, PROVIDER_NAME, SECTOR_ID, DATE_CREATED)
-                                 VALUES (:providerid, :provider_name, :sector, :dateCreated) ");
-
-		 $date =  date('Y-m-d H:i:s');
-
-                 $this->db->bind(':providerid', $clientid);
-                 $this->db->bind(':provider_name', $company_name);
-                 $this->db->bind(':sector', $sector);
-                 $this->db->bind(':dateCreated', $date);
-
-                 if($this->db->execute()) {
-			return true;
-		 }else{
-			return false;
-		 }
-
-        }catch(PDOException $e){
-            echo 'ERROR!';
-            print_r( $e );
-        }
-
-}
-
-
-// FUNCTION TO CREATE PROVIDER ACCOUNT
-
    public function createProviderAccount($data) {
 
 	try{
@@ -124,7 +34,7 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
 
 
         $date =  date('Y-m-d H:i:s');
-        $clientid = $this->getClientID();
+        $clientid = $this->getCustomerID();
         
         //Bind values
         $this->db->bind(':clientid', $clientid);
@@ -143,14 +53,30 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
         //Execute function
         if ($this->db->execute()) {
 	   
-		//create provider access
-		//$this->createProviderAccess($clientid);
+		//create access ID
+                $this->db-query("INSERT INTO  wa_access (CLIENT_ID, ACCESS_ID, DATE_CREATED ) VALUES 
+			      (:client_id, :access_id,:dateCreated); ");
 
-		//create provider details
-		//$this->createProviderDetails($clientid, $data['company_name'], $data['sector']);
+		$hashPwd = $this->getHashAccessID();
 
+		 $this->db->bind(':client_id', $clientid);
+       		 $this->db->bind(':access_id', $hashPwd);
+	         $this->db->bind(':dateCreated', $date);
+		
+		$this->db->execute();
 
-	         return $clientid;
+		// create provider details
+		$this->db->query("INSERT INTO wa_prodviders (PROVIDER_ID, PROVIDER_NAME, SECTOR_ID, DATE_CREATED)
+				 VALUES (:providerid, :provider_name, :sector, :date); ");
+		
+		 $this->db->bind(':providerid', $clientid);
+                 $this->db->bind(':provider_name', $data['company_name']);
+		 $this->db->bind(':sector', $data['sector']);
+                 $this->db->bind(':dateCreated', $date);
+
+		 $this->db->execute();
+
+	         return true;    
 
         } else {
             return false;
@@ -164,23 +90,14 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
    }
 
    public function getHashAccessID () {
-   	 $url = 'https://backend.wealthia.ng/api/v1/clients/getHashAccessID';
+    $url = 'https://backend.wealthia.ng/api/v1/clients/getHashAccessID';
 
-	$response = file_get_contents($url);
+$response = file_get_contents($url);
 
-	return $response;
-
-   }
-
-   public function getClientID () {
-
-        $url = 'https://backend.wealthia.ng/api/v1/clients/getClientID';
-
-        $response = file_get_contents($url);
-
-        return $response;
+return $response;
 
    }
+
 
    public function insertDocumentUpload($data) {
 
@@ -192,12 +109,12 @@ public function createProviderDetails($clientid, $company_name, $sector ) {
 
         $date =  date('Y-m-d H:i:s');
         $uploadid = $this->getCustomerID();
-
+        
         //Bind values
         $this->db->bind(':uploadid', $uploadid);
         $this->db->bind(':providerid', $data['providerid']);
-        $this->db->bind(':contact_user_id', $data['email']);
-        $this->db->bind(':contname', $data['contact_name']);
+        $this->db->bind(':contact_user_id', $data['contact_user_id']);
+        $this->db->bind(':contname', $data['contactPerson']);
         $this->db->bind(':coiDocs', $data['coi_filename']);
         $this->db->bind(':dirDocs', $data['dir_filename']);
         $this->db->bind(':dateCreated', $date);

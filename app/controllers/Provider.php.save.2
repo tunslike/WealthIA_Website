@@ -1,6 +1,6 @@
 
 
-<?php
+'<?php
 class Provider extends Controller {
     public function __construct() {
         $this->userModel = $this->model('ProviderBackend');
@@ -109,9 +109,12 @@ error_reporting(E_ALL);
 
                //create provider account here
 	        $clientid  = $this->userModel->createProviderAccount($data);
-		$password = $this->userModel->createProviderPassword($clientid);
-		$details = $this->userModel->createProviderDetails($clientid, $data['company_name'], $data['sector']);
-		
+		$access = $this->userModel->createProviderAccess($clientid);
+		//$details = $this->userModel->createProviderDetails($clientid, $data['contact_name'], $data['sector']);
+		echo $clientid;
+		exit();
+
+
                 if(in_array($coi_filetype, $allowed)){
 
                     if(file_exists($path . $coi_filename)){
@@ -129,8 +132,6 @@ error_reporting(E_ALL);
                         var_dump($data);
                         exit();
   */                      
-
-			$data['providerid'] = $clientid;
 
                         if ($this->userModel->insertDocumentUpload($data)) { 
 
@@ -153,11 +154,6 @@ error_reporting(E_ALL);
 				$data['errorMessage'] = "There was an error while uploading your document, please retry later!";
 			}
 			*/
-			if($data['uploadStatus'] = 'true') {
-				$data['status'] = 'true';
-			}else{
-				$data['status'] = 'false';
-			}
                 }else {
                     $data['errorMessage'] = "There was an error while uploading your document, please retry later!";
                 }

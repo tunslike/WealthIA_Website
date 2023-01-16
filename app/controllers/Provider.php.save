@@ -1,5 +1,3 @@
-
-
 <?php
 class Provider extends Controller {
     public function __construct() {
@@ -22,57 +20,24 @@ error_reporting(E_ALL);
         $this->view('index', $data);
     }
 
-
-// function to create provider account
-   public function createProviderAccount ()  {
-
-	 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-	    $data = [
-                'contact_name' => trim($_POST['contactName']),
-                'sector' => trim($_POST['sector']),
-                'mobile' => trim($_POST['mobile']),
-		'email' => trim($_POST['email']),
-		'type' => trim($_POST['type']),
-		'state' => trim($_POST['state']),
-                'ipaddress' => $this->getRealIPAddr(),
-                'status' => 'false',
-                'errorMessage' => '',
-                'title' => 'Create Provider Account'
-            ];
-
-	}else {
-
-	     $data['errorMessage'] = "Unable to process your request, please retry later!";
-
-	}
-
-	 $this->view('provider/completeRegistration', $data);
-   }
-
-//Function to upload documents and registration
-
-   public function submitRegistration () {
+    public function submitRegistration () {
 
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $data = [
-		'company_name' => trim($_POST['companyName']),
-                'contact_name' => trim($_POST['contactPerson']),
-                'sector' => trim($_POST['sector']),
-                'mobile' => trim($_POST['contactMobile']),
-                'email' => trim($_POST['contactEmail']),
-                'type' => 'Company',
-                'state' => trim($_POST['contactState']),
-                'coi_filename' => '',
+                'providerid' => trim($_POST['providerID']),
+                'contact_user_id' => trim($_POST['contact_user_id']),
+                'contactPerson' => trim($_POST['contactPerson']),
+               	'contactPhone' => trim($_POST['contactPhone']),
+		'contactEmail' => trim($_POST('contactEmail']),
+		'contactState' => trim($POST('contactState']),
+		 'coi_filename' => '',
                 'dir_filename' => '',
                 'ipaddress' => $this->getRealIPAddr(),
                 'status' => 'false',
-		'uploadStatus' => 'false',
                 'errorMessage' => '',
                 'title' => 'Upload Provider Documents'
             ];
-	
 
             //check if files are upload
             if(isset($_FILES["coiDocs"]) && $_FILES["coiDocs"]["error"] == 0 || isset($_FILES["dirSign"]) && $_FILES["dirSign"]["error"] == 0){ 
@@ -107,11 +72,6 @@ error_reporting(E_ALL);
                     $data['errorMessage'] = "Error: File size is larger than the allowed limit.";
                 };
 
-               //create provider account here
-	        $clientid  = $this->userModel->createProviderAccount($data);
-		$password = $this->userModel->createProviderPassword($clientid);
-		$details = $this->userModel->createProviderDetails($clientid, $data['company_name'], $data['sector']);
-		
                 if(in_array($coi_filetype, $allowed)){
 
                     if(file_exists($path . $coi_filename)){
@@ -122,42 +82,20 @@ error_reporting(E_ALL);
 
                         move_uploaded_file($_FILES["coiDocs"]["tmp_name"], $path . $coi_filename);
 
-/*                        
+                        /*
                         $data['coi_filename'] = $coi_filename;
 
                         echo 'I am here<br>'.APPROOT.'<br><br>';
                         var_dump($data);
                         exit();
-  */                      
-
-			$data['providerid'] = $clientid;
+                        */
 
                         if ($this->userModel->insertDocumentUpload($data)) { 
 
-                            $data['uploadStatus'] = 'true';
+                            $data['status'] = 'true';
                         }
                     }
-			/*
-			if($data['uploadStatus'] == 'true'){
-				
-				//create provider account
-				$status = $this->userModel->createProviderAccount($data);
 
-				if($status) {
-				   $data['status'] = 'true';
-				}else {
-				   $data['status'] = 'false';
-				}
-
-			}else{
-				$data['errorMessage'] = "There was an error while uploading your document, please retry later!";
-			}
-			*/
-			if($data['uploadStatus'] = 'true') {
-				$data['status'] = 'true';
-			}else{
-				$data['status'] = 'false';
-			}
                 }else {
                     $data['errorMessage'] = "There was an error while uploading your document, please retry later!";
                 }
@@ -174,22 +112,17 @@ error_reporting(E_ALL);
 
     public function completeRegistration() {
 
-	 require_once '../app/libraries/Mobile-Detect/Mobile_Detect.php';
+     require_once '../app/libraries/Mobile-Detect/Mobile_Detect.php';
         $detect = new Mobile_Detect;
 
-	// Any mobile device (phones or tablets).
-	if($detect->isMobile()) {
- 		echo 'This is a mobile page';
-		exit();
-	}
+// Any mobile device (phones or tablets).
+if($detect->isMobile()) {
+ 	echo 'This is a mobile page';
+exit();
+}
 
-       $sectors = $this->userModel->loadSectors();
-//	$hasPassword =  $this->userModel->getHashAccessID();
-//echo $hasPassword;
-//exit();
 
         $data = [
-	   'sectors' => $sectors,
             'title' => 'Home page',
             'status' => '',
         ];

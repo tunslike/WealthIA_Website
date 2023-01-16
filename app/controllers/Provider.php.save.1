@@ -1,6 +1,5 @@
 
-
-<?php
+'<?php
 class Provider extends Controller {
     public function __construct() {
         $this->userModel = $this->model('ProviderBackend');
@@ -107,11 +106,6 @@ error_reporting(E_ALL);
                     $data['errorMessage'] = "Error: File size is larger than the allowed limit.";
                 };
 
-               //create provider account here
-	        $clientid  = $this->userModel->createProviderAccount($data);
-		$password = $this->userModel->createProviderPassword($clientid);
-		$details = $this->userModel->createProviderDetails($clientid, $data['company_name'], $data['sector']);
-		
                 if(in_array($coi_filetype, $allowed)){
 
                     if(file_exists($path . $coi_filename)){
@@ -130,14 +124,12 @@ error_reporting(E_ALL);
                         exit();
   */                      
 
-			$data['providerid'] = $clientid;
-
                         if ($this->userModel->insertDocumentUpload($data)) { 
 
                             $data['uploadStatus'] = 'true';
                         }
                     }
-			/*
+
 			if($data['uploadStatus'] == 'true'){
 				
 				//create provider account
@@ -152,12 +144,7 @@ error_reporting(E_ALL);
 			}else{
 				$data['errorMessage'] = "There was an error while uploading your document, please retry later!";
 			}
-			*/
-			if($data['uploadStatus'] = 'true') {
-				$data['status'] = 'true';
-			}else{
-				$data['status'] = 'false';
-			}
+
                 }else {
                     $data['errorMessage'] = "There was an error while uploading your document, please retry later!";
                 }
@@ -174,16 +161,17 @@ error_reporting(E_ALL);
 
     public function completeRegistration() {
 
-	 require_once '../app/libraries/Mobile-Detect/Mobile_Detect.php';
+     	require_once '../app/libraries/Mobile-Detect/Mobile_Detect.php';
         $detect = new Mobile_Detect;
 
 	// Any mobile device (phones or tablets).
 	if($detect->isMobile()) {
  		echo 'This is a mobile page';
-		exit();
-	}
+		exit();		
+	
 
        $sectors = $this->userModel->loadSectors();
+
 //	$hasPassword =  $this->userModel->getHashAccessID();
 //echo $hasPassword;
 //exit();

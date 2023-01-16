@@ -33,7 +33,7 @@
                     <select style="border:none; width:'200px';" name="sector" id="sector" >
                       <option>Select here</option>
 		<?php foreach($data['sectors'] as $sector): ?>
-			<option><?php echo $sector->SECTOR_NAME; ?></option>
+			<option value="<?php echo $sector-> ?>"><?php echo $sector->SECTOR_NAME; ?></option>
 		<?php endforeach; ?>
                     </select>
 </div>
